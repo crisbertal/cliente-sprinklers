@@ -11,7 +11,7 @@ const App = () => {
   const submitMessage = (usr, msg) => {
     const message = { user: usr, message: msg };
     ws.send(JSON.stringify(message));
-    setMessages([message, ...messages]);
+    //setMessages([message, ...messages]);
   }
 
   useEffect(() => {
@@ -19,9 +19,11 @@ const App = () => {
       console.log('WebSocket Connected');
     }
 
+    // cuando recibe del server
     ws.onmessage = (e) => {
       const message = JSON.parse(e.data);
       setMessages([message, ...messages]);
+      console.log("He recibido un mensaje", message);
     }
 
     return () => {
@@ -46,7 +48,7 @@ const App = () => {
       </label>
 
       <ul>
-        {messages.reverse().map((message, index) =>
+        {messages.map((message, index) =>
           <li key={index}>
             <b>{message.user}</b>: <em>{message.message}</em>
           </li>
