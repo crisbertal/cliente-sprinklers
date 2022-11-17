@@ -1,17 +1,18 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
-const URL = 'ws://192.168.0.16:8080';
+const URL = 'ws://localhost:8080';
+// REFACTOR de momento no peta creando el WebSocket fuera
+const ws = new WebSocket(URL);
 
 const App = () => {
-  const [user, setUser] = useState('Tarzan');
-  const [message, setMessage] = useState([]);
-  const [messages, setMessages] = useState([]);
-  const [ws, setWs] = useState(new WebSocket(URL));
+  const [counter, setCounter] = useState(0);
+  const [client, setClient] = useState("");
 
-  const submitMessage = (usr, msg) => {
-    const message = { user: usr, message: msg };
-    ws.send(JSON.stringify(message));
-    //setMessages([message, ...messages]);
+  const handleIncrease = () => {
+    ws.send(JSON.stringify({
+      sender: client,
+      body: counter,
+    }));
   }
 
   useEffect(() => {
@@ -21,56 +22,33 @@ const App = () => {
 
     // cuando recibe del server
     ws.onmessage = (e) => {
-      const message = JSON.parse(e.data);
-      setMessages([message, ...messages]);
-      console.log("He recibido un mensaje", message);
+      // recibe del server el incremento del jugador
+      // actualiza al contador enviado por otro jugador
+      const data = JSON.parse(e.data)
+      console.log("El recibo", data)
+      setCounter(data.body)
     }
 
     return () => {
       ws.onclose = () => {
         console.log('WebSocket Disconnected');
-        setWs(new WebSocket(URL));
       }
     }
-  }, [ws.onmessage, ws.onopen, ws.onclose, messages]);
+  }, []);
 
   return (
     <div>
-      <label htmlFor="user">
-        Name :
+      <label>
+        {"Nombre: "}
         <input
           type="text"
-          id="user"
-          placeholder="User"
-          value={user}
-          onChange={e => setUser(e.target.value)}
+          name="name"
+          value={client}
+          onChange={(e) => setClient(e.target.value)}
         />
       </label>
-
-      <ul>
-        {messages.map((message, index) =>
-          <li key={index}>
-            <b>{message.user}</b>: <em>{message.message}</em>
-          </li>
-        )}
-      </ul>
-
-      <form
-        action=""
-        onSubmit={e => {
-          e.preventDefault();
-          submitMessage(user, message);
-          setMessage([]);
-        }}
-      >
-        <input
-          type="text"
-          placeholder={'Type a message ...'}
-          value={message}
-          onChange={e => setMessage(e.target.value)}
-        />
-        <input type="submit" value={'Send'} />
-      </form>
+      <h2>{counter}</h2>
+      <button onClick={handleIncrease}>Incrementa</button>
     </div>
   )
 }
