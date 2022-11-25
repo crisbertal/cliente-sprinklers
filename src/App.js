@@ -1,54 +1,33 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
-const URL = 'ws://localhost:8080';
-// REFACTOR de momento no peta creando el WebSocket fuera
-const ws = new WebSocket(URL);
+import Player from "./Player.jsx";
+import Login from "./Login.jsx";
 
 const App = () => {
   const [counter, setCounter] = useState(0);
   const [client, setClient] = useState("");
-
-  const handleIncrease = () => {
-    ws.send(JSON.stringify({
-      sender: client,
-      body: counter,
-    }));
-  }
-
-  useEffect(() => {
-    ws.onopen = () => {
-      console.log('WebSocket Connected');
-    }
-
-    // cuando recibe del server
-    ws.onmessage = (e) => {
-      // recibe del server el incremento del jugador
-      // actualiza al contador enviado por otro jugador
-      const data = JSON.parse(e.data)
-      console.log("El recibo", data)
-      setCounter(data.body)
-    }
-
-    return () => {
-      ws.onclose = () => {
-        console.log('WebSocket Disconnected');
-      }
-    }
-  }, []);
+  const [channel, setChannel] = useState("");
+  const [isLogged, setLogged] = useState(false);
 
   return (
     <div>
-      <label>
-        {"Nombre: "}
-        <input
-          type="text"
-          name="name"
-          value={client}
-          onChange={(e) => setClient(e.target.value)}
-        />
-      </label>
-      <h2>{counter}</h2>
-      <button onClick={handleIncrease}>Incrementa</button>
+      <h1>Juego</h1>
+      {/* Si no esta conectado muestra login. Con conexion muestra el Player */}
+      {
+        !isLogged ?
+          <Login
+            client={client}
+            setClient={setClient}
+            setLogged={setLogged}
+            setChannel={setChannel}
+          /> :
+          <Player
+            client={client}
+            counter={counter}
+            channel={channel}
+            setCounter={setCounter}
+          />
+      }
     </div>
   )
 }
