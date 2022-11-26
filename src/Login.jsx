@@ -2,14 +2,13 @@ import { useState } from 'react';
 
 const Login = ({ client, setClient, setLogged, setChannel }) => {
   const [pass, setPass] = useState('')
-  // El server da de alta a los usuarios
-  // Si existe en el fichero, se conecta al socket con sus datos
-  const handleLogin = () => {
-    // tiene que hacer login con el servidor de express
-    // 1. Post con los datos
-    // 2. Comprobar que existe dentro del objeto JSON
-    // 3. Acceder al canal que le corresponde al usuario
 
+  const handleDefault = () => {
+    setClient("Laura");
+    setPass("1234");
+  }
+
+  const handleLogin = () => {
     fetch('http://localhost:8080/api/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -30,14 +29,7 @@ const Login = ({ client, setClient, setLogged, setChannel }) => {
           console.log("Login incorrecto")
         }
       });
-
-    // setLogged(true)
-    // console.log("se ha hecho login con cliente ", client)
-    // setClient(client)
   }
-
-  // Login utiliza los nombres que hay en el fichero y reenvia al canal concreto
-  // por url
 
   return (
     <div>
@@ -61,6 +53,7 @@ const Login = ({ client, setClient, setLogged, setChannel }) => {
         />
       </label>
       <button onClick={handleLogin}>Conectar</button>
+      <button onClick={handleDefault}>Default</button>
     </div>
   )
 }

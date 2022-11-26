@@ -7,7 +7,6 @@ const Player = ({ client, counter, setCounter, channel }) => {
   const ws = new WebSocket(URL);
 
   const handleIncrease = () => {
-    console.log("cliente es ", client)
     ws.send(JSON.stringify({
       type: "Increase",
       sender: client,
@@ -16,8 +15,6 @@ const Player = ({ client, counter, setCounter, channel }) => {
   }
 
   useEffect(() => {
-    console.log("Lanza useEffect")
-
     // Abre el WebSocket y envia el nombre de usuario
     ws.onopen = () => {
       console.log('WebSocket Connected');
