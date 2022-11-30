@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import Player from "./Player.jsx";
 import Login from "./Login.jsx";
+import SocketioPlayer from "./SocketioPlayer.jsx";
 
 const App = () => {
   const [counter, setCounter] = useState(0);
@@ -12,7 +13,6 @@ const App = () => {
   return (
     <div>
       <h1>Juego</h1>
-      {/* Si no esta conectado muestra login. Con conexion muestra el Player */}
       {
         !isLogged ?
           <Login
@@ -21,13 +21,14 @@ const App = () => {
             setLogged={setLogged}
             setChannel={setChannel}
           /> :
-          <Player
-            client={client}
-            counter={counter}
-            channel={channel}
-            setCounter={setCounter}
-          />
+          <SocketioPlayer />
       }
+      {/*   <Player */}
+      {/*     client={client} */}
+      {/*     counter={counter} */}
+      {/*     channel={channel} */}
+      {/*     setCounter={setCounter} */}
+      {/*   /> */}
     </div>
   )
 }
